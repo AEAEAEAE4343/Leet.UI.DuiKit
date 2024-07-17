@@ -126,6 +126,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="NotepadWindow.cpp" />
     <ClCompile Include="src\duinotepad.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -236,6 +237,7 @@
     <ClInclude Include="DirectUI\XBaby.h" />
     <ClInclude Include="DirectUI\XElement.h" />
     <ClInclude Include="DirectUI\XProvider.h" />
+    <ClInclude Include="NotepadWindow.h" />
     <ClInclude Include="src\resource.h" />
     <ClInclude Include="src\stdafx.h" />
   </ItemGroup>

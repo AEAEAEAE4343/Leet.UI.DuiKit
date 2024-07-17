@@ -18,6 +18,9 @@
     <ClCompile Include="src\duinotepad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="NotepadWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="DirectUI\DirectUI.def">
@@ -337,6 +340,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NotepadWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
