@@ -1,0 +1,37 @@
+<duixml>
+	<stylesheets>
+		<style resid="duipadss">
+			<if id="atom(padframe)">
+				<HWNDElement padding="rect(5rp,5rp,5rp,5rp)" background="gainsboro" />
+			</if>
+			<if id="atom(markupbox)">
+				<element />
+			</if>
+			<if id="atom(status)">
+				<element contentalign="wrapcenter" background="navajowhite" foreground="black" fontsize="10pt" fontweight="800" />
+			</if>
+			<if id="atom(container)">
+				<element margin="rect(0rp,5rp,5rp,5rp)" background="white" borderthickness="rect(1rp,1rp,1rp,1rp)" />
+			</if>
+			<edit margin="rect(5rp,5rp,5rp,5rp)" borderthickness="rect(1rp,1rp,1rp,1rp)" fontsize="10pt" background="rgb(128,128,128)" />
+			<if keyfocused="true">
+				<edit background="white" />
+			</if>
+			<if dirty="true">
+				<edit bordercolor="red" />
+			</if>
+			<if mousefocused="true">
+				<thumb background="darkgray" cursor="sizewe" />
+			</if>
+		</style>
+	</stylesheets>
+
+	<HWNDElement id="atom(padframe)" resid="duipad" sheet="duipadss" layout="borderlayout()" active="keyboard">
+		<element id="atom(markupbox)" layoutpos="left" layout="borderlayout()" width="350">
+			<element id="atom(status)" layoutpos="bottom" contentalign="wrapcenter" />
+			<edit id="atom(edit)" layoutpos="client" multiline="true" />
+		</element>
+		<thumb layoutpos="left" width="5" />
+		<element id="atom(container)" layoutpos="client" layout="filllayout()" />
+	</HWNDElement>
+</duixml>
