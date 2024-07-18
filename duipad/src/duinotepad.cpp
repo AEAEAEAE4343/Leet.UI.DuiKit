@@ -18,66 +18,65 @@
 
 #include "stdafx.h"
 #include "NotepadWindow.h"
+#include "NotepadListener.h"
 
 using namespace DirectUI;
+using namespace Leet::UI::DuiKit::Notepad;
 
-namespace Leet {
-namespace UI {
-namespace DuiKit {
-namespace Notepad
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-    int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+    UNREFERENCED_PARAMETER(hInstance);
+    UNREFERENCED_PARAMETER(hPrevInstance);
+    UNREFERENCED_PARAMETER(nCmdShow);
+
+    HRESULT hRes;
+
+    // Initialize DUI within the process
+    hRes = InitProcessPriv(14, NULL, 0, true);
+
+    // Intialize DUI within the thread
+    hRes = InitThread(2);
+    if (FAILED(hRes))
+        exit(hRes);
+
+    // Register DUI control set
+    DirectUI::RegisterAllControls();
+
+    // Create the main menu
+    NotepadWindow* mainWindow;
+    bool shit = NotepadWindow::Create(&mainWindow, hInstance);
+
+    // Create a listener
+    NotepadListener* listener = new NotepadListener(mainWindow);
+
+    // Create the menu
+    HMENU menu = LoadMenuW(hInstance, MAKEINTRESOURCEW(IDR_MENU1));
+    mainWindow->SetMenu(menu);
+
+    // Message loop
     {
-        UNREFERENCED_PARAMETER(hInstance);
-        UNREFERENCED_PARAMETER(hPrevInstance);
-        UNREFERENCED_PARAMETER(nCmdShow);
-
-        HRESULT hRes;
-
-        // Initialize DUI within the process
-        hRes = InitProcessPriv(14, NULL, 0, true);
-
-        // Intialize DUI within the thread
-        hRes = InitThread(2);
-        if (FAILED(hRes))
-            exit(hRes);
-
-        // Register DUI control set
-        DirectUI::RegisterAllControls();
-
-        // Create the main menu
-        NotepadWindow* mainWindow;
-        bool shit = NotepadWindow::Create(&mainWindow, hInstance);
-
-        // Create the menu
-        HMENU menu = LoadMenuW(hInstance, MAKEINTRESOURCEW(IDR_MENU1));
-        mainWindow->SetMenu(menu);
-
-        // Message loop
+        BOOL bRet;
+        MSG msg;
+        while ((bRet = GetMessage(&msg, NULL, 0, 0)) != 0)
         {
-            BOOL bRet;
-            MSG msg;
-            while ((bRet = GetMessage(&msg, NULL, 0, 0)) != 0)
+            if (bRet == -1)
             {
-                if (bRet == -1)
-                {
-                    // Handle the error and possibly exit
-                }
-                else
-                {
-                    TranslateMessage(&msg);
-                    if (mainWindow->HandleMenuMessage(msg.hwnd, msg.message, msg.wParam, msg.lParam))
-                        continue;
-                    DispatchMessage(&msg);
-                }
+                // Handle the error and possibly exit
+            }
+            else
+            {
+                TranslateMessage(&msg);
+                if (mainWindow->HandleMenuMessage(msg.hwnd, msg.message, msg.wParam, msg.lParam))
+                    continue;
+                DispatchMessage(&msg);
             }
         }
-
-        // DirectUI uninitialize thread
-        UnInitThread();
-        // DirectUI uninitialize process
-        UnInitProcessPriv(NULL);
-
-        return 0;
     }
-}}}}
+
+    // DirectUI uninitialize thread
+    UnInitThread();
+    // DirectUI uninitialize process
+    UnInitProcessPriv(NULL);
+
+    return 0;
+}

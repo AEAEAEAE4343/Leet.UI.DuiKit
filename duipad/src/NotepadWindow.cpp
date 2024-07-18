@@ -51,6 +51,7 @@ bool NotepadWindow::Create(NotepadWindow** pNotepadWindow, HINSTANCE moduleInsta
     // Show the window
     pNpWindow->_pNativeWindowHost->Host(pNpWindow->_pWindowElement);
     pNpWindow->_pNativeWindowHost->ShowWindow(SW_SHOW);
+    *pNotepadWindow = pNpWindow;
 
     return true;
 }
@@ -83,6 +84,11 @@ bool Leet::UI::DuiKit::Notepad::NotepadWindow::HandleMenuMessage(HWND hWnd, int 
     }
 
     return false;
+}
+
+HWND NotepadWindow::GetWindowHandle()
+{
+    return _pNativeWindowHost->GetHWND();
 }
 
 void NotepadWindow::OnInput(Element* elem, InputEvent* pie)
@@ -206,4 +212,10 @@ void NotepadWindow::Refresh()
     pv->Release();
 
     _pWindowElement->EndDefer(defer);
+}
+
+
+NotepadWindow::NotepadWindow() 
+{
+    
 }

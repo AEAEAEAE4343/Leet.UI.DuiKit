@@ -142,9 +142,7 @@ namespace DirectUI
 	int WINAPI CreateDUIWrapperEx(Element*, class IXProviderCP*, class XProvider**);
 	int WINAPI CreateDUIWrapperFromResource(HINSTANCE,UCString, UCString, UCString, class XResourceProvider**);
 
-	int WINAPI GetScreenDPI() {
-		return 96;
-	}
+	int WINAPI GetScreenDPI();
 
 	int WINAPI RegisterAllControls();
 	int WINAPI RegisterBaseControls();

@@ -25,6 +25,7 @@ namespace Notepad
     {
     private:
         NotepadWindow* _pWindow;
+    public:
         NotepadListener(NotepadWindow* window) 
         {
             _pWindow = window;
