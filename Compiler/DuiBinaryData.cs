@@ -1,8 +1,8 @@
-using System.Xml;
+using System.Collections.Generic;
 
 namespace Leet.UI.DuiKit
 {
-    class DuiBinaryData 
+    public class DuiBinaryData 
     {
         public class DuiBinaryResource
         {
@@ -27,12 +27,12 @@ namespace Leet.UI.DuiKit
 
             public EntryType Type;
             public ushort NameIndex;
-            public List<EntryProperty> Properties = [];
+            public List<EntryProperty> Properties = new List<EntryProperty>();
         }
 
-        public List<DuiBinaryEntry> Entries = [];
-        public List<string> Strings = [];
-        public List<DuiBinaryResource> Resources = [];
+        public List<DuiBinaryEntry> Entries = new List<DuiBinaryEntry>();
+        public List<string> Strings = new List<string>();
+        public List<DuiBinaryResource> Resources = new List<DuiBinaryResource>();
 
     }
 }

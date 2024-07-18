@@ -22,7 +22,7 @@
     <VCProjectVersion>17.0</VCProjectVersion>
     <ProjectGuid>{51B9F8FF-4642-44A0-BBA3-3CC268CD2D59}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <ProjectName>Leet.UI.DuiKit.NotePad</ProjectName>
+    <ProjectName>Leet.UI.DuiKit.Notepad</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

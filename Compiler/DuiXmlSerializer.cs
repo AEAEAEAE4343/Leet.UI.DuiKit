@@ -1,10 +1,11 @@
-using System.Text.RegularExpressions;
+using System;
+using System.IO;
 using System.Xml;
-using System.Xml.Serialization;
+using System.Linq;
 
 namespace Leet.UI.DuiKit
 {
-    class DuiXmlSerializer
+    public class DuiXmlSerializer
     {
         /// <summary>
         /// Serializes a DuiBinaryData object into XML and outputs it onto a Stream.
@@ -13,32 +14,34 @@ namespace Leet.UI.DuiKit
         /// <param name="output">The stream to output the XML data to.</param>
         public void Serialize(DuiBinaryData data, Stream output) 
         {
-            using XmlWriter writer = XmlWriter.Create(output, new XmlWriterSettings() { Indent = true, OmitXmlDeclaration = true, IndentChars = "\t" });
-            
-            foreach (var entry in data.Entries)
+            using (XmlWriter writer = XmlWriter.Create(output, new XmlWriterSettings() { Indent = true, OmitXmlDeclaration = true, IndentChars = "\t" }))
             {
-                if (entry.Type == DuiBinaryData.DuiBinaryEntry.EntryType.StartElement
-                    || entry.Type == DuiBinaryData.DuiBinaryEntry.EntryType.StartElementEmpty)
-                {
-                    string name = (entry.NameIndex & 0x8000) != 0 ? Constants.BDXCommonStringTable[entry.NameIndex & 0x7FFF] : data.Strings[entry.NameIndex];
-                    writer.WriteStartElement(name);
 
-                    foreach (var property in entry.Properties)
+                foreach (var entry in data.Entries)
+                {
+                    if (entry.Type == DuiBinaryData.DuiBinaryEntry.EntryType.StartElement
+                        || entry.Type == DuiBinaryData.DuiBinaryEntry.EntryType.StartElementEmpty)
                     {
-                        string propertyName = (property.NameIndex & 0x8000) != 0 ? Constants.BDXCommonStringTable[property.NameIndex & 0x7FFF] : data.Strings[property.NameIndex];
-                        string propertyValue = (property.ValueIndex & 0x8000) != 0 ? Constants.BDXCommonStringTable[property.ValueIndex & 0x7FFF] : data.Strings[property.ValueIndex];
+                        string name = (entry.NameIndex & 0x8000) != 0 ? Constants.BDXCommonStringTable[entry.NameIndex & 0x7FFF] : data.Strings[entry.NameIndex];
+                        writer.WriteStartElement(name);
 
-                        writer.WriteAttributeString(propertyName, propertyValue);
+                        foreach (var property in entry.Properties)
+                        {
+                            string propertyName = (property.NameIndex & 0x8000) != 0 ? Constants.BDXCommonStringTable[property.NameIndex & 0x7FFF] : data.Strings[property.NameIndex];
+                            string propertyValue = (property.ValueIndex & 0x8000) != 0 ? Constants.BDXCommonStringTable[property.ValueIndex & 0x7FFF] : data.Strings[property.ValueIndex];
+
+                            writer.WriteAttributeString(propertyName, propertyValue);
+                        }
+
+                        if (entry.Type == DuiBinaryData.DuiBinaryEntry.EntryType.StartElementEmpty)
+                            writer.WriteEndElement();
                     }
-
-                    if (entry.Type == DuiBinaryData.DuiBinaryEntry.EntryType.StartElementEmpty)
+                    else if (entry.Type == DuiBinaryData.DuiBinaryEntry.EntryType.EndElement)
+                    {
                         writer.WriteEndElement();
+                    }
+                    else throw new InvalidDataException($"The entry type {entry.Type} is not supported.");
                 }
-                else if (entry.Type == DuiBinaryData.DuiBinaryEntry.EntryType.EndElement)
-                {
-                    writer.WriteEndElement();
-                }
-                else throw new InvalidDataException($"The entry type {entry.Type} is not supported.");
             }
         }
 
@@ -61,7 +64,7 @@ namespace Leet.UI.DuiKit
                 return (ushort)(data.Strings.Count - 1);
             }
 
-            using XmlTextReader reader = new XmlTextReader(input);
+            using (XmlTextReader reader = new XmlTextReader(input))
             while (reader.MoveToNextAttribute() || reader.Read())
             {
                 switch (reader.NodeType)
