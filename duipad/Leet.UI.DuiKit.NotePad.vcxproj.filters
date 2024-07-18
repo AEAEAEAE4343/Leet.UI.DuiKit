@@ -18,7 +18,13 @@
     <ClCompile Include="src\duinotepad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NotepadWindow.cpp">
+    <ClCompile Include="src\NotepadWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NotepadListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -342,7 +348,13 @@
     <ClInclude Include="src\stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NotepadWindow.h">
+    <ClInclude Include="src\NotepadWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\NotepadListener.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

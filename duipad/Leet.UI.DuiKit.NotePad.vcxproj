@@ -126,8 +126,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="NotepadWindow.cpp" />
+    <ClCompile Include="src\NotepadListener.cpp" />
+    <ClCompile Include="src\NotepadWindow.cpp" />
     <ClCompile Include="src\duinotepad.cpp" />
+    <ClCompile Include="src\util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DirectUI\DirectUI.def" />
@@ -237,9 +239,11 @@
     <ClInclude Include="DirectUI\XBaby.h" />
     <ClInclude Include="DirectUI\XElement.h" />
     <ClInclude Include="DirectUI\XProvider.h" />
-    <ClInclude Include="NotepadWindow.h" />
+    <ClInclude Include="src\NotepadListener.h" />
+    <ClInclude Include="src\NotepadWindow.h" />
     <ClInclude Include="src\resource.h" />
     <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="src\util.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="src\duinotepad.rc" />

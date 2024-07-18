@@ -20,6 +20,7 @@
 #define DUI_APP_STDAFX_H_INCLUDED
 
 #pragma once
+#define DUIAssert(a, b) if (!(a)) { MessageBoxA(NULL, b" The application will exit.", "Fatal Error", MB_OK|MB_ICONERROR); exit(1); }
 
 // Use only needed Win32 functions
 #if !defined(WIN32_LEAN_AND_MEAN)
@@ -59,5 +60,8 @@
 #define GADGET_ENABLE_TRANSITIONS
 //#include <duser.h>
 #include "../DirectUI/include/DirectUI.h"
+
+// Include resources
+#include "resource.h"
 
 #endif // DUI_APP_STDAFX_H_INCLUDED
