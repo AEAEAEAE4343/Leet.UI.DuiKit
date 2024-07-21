@@ -19,6 +19,9 @@
 #include "stdafx.h"
 #include "NotepadWindow.h"
 #include "NotepadListener.h"
+#include "LineNumEditElement.h"
+#define LINENUMEDIT_IMPL
+#include "../LineNumEdit/LineNumEdit.hpp"
 
 using namespace DirectUI;
 using namespace Leet::UI::DuiKit::Notepad;
@@ -41,6 +44,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     // Register DUI control set
     DirectUI::RegisterAllControls();
+
+    // Register LineNumEdit win32 control
+    LineNumEdit::SuperclassWindow();
+    LineNumEditElement::Register();
 
     // Create the main menu
     NotepadWindow* mainWindow;

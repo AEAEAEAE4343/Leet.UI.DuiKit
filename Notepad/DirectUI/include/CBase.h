@@ -37,7 +37,7 @@ namespace DirectUI
 		//2
 		virtual bool OnLostDialogFocus(DialogElement *);
 		//3
-		virtual bool OnReceivedDialogFocus(DialogElement *);
+		virtual bool OnReceivedDialogFocus(DialogElement*);
 
 	protected:
 		//4

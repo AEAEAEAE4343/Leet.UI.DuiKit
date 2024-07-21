@@ -7,7 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Leet.UI.DuiKit.Notepad", "N
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Leet.UI.DuiKit.Compiler", "Compiler\Leet.UI.DuiKit.Compiler.csproj", "{D6D7DE18-C426-47C6-B394-CB04F80B4814}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leet.UI.DuiKit.Compiler.WinForms", "Notepad.WinForms\Leet.UI.DuiKit.Compiler.WinForms.csproj", "{5ABCD16D-602D-4E3A-968D-A467BAAC2A2F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leet.UI.DuiKit.Compiler.WinForms", "Compiler.WinForms\Leet.UI.DuiKit.Compiler.WinForms.csproj", "{5ABCD16D-602D-4E3A-968D-A467BAAC2A2F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

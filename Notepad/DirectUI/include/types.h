@@ -22,12 +22,15 @@ struct GMA_ACTIONINFO
 
 };
 
+DECLARE_HANDLE(HGADGET);
+
+typedef int MSGID;
 typedef struct tagGMSG
 {
+	DWORD       cbSize;         // (REQUIRED) Size of message in bytes
+	MSGID       nMsg;           // (REQUIRED) Gadget message
+	HGADGET     hgadMsg;        // (REQUIRED) Gadget that message is "about"
 } GMSG, *LPGMSG;
-
-
-DECLARE_HANDLE(HGADGET);
 
 struct EventMsg
 {

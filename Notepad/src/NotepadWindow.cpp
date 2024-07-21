@@ -1,6 +1,7 @@
 #include "NotepadWindow.h"
 #include "util.h"
 #include "NotepadListener.h"
+#include "LineNumEditElement.h"
 
 using namespace Leet::UI::DuiKit::Notepad;
 using namespace DirectUI;
@@ -36,7 +37,7 @@ bool NotepadWindow::Create(NotepadWindow** pNotepadWindow, HINSTANCE moduleInsta
     pParser = NULL;
 
     // Initialize members
-    pNpWindow->_pStatus = pNpWindow->_pWindowElement->FindDescendent(StrToID(reinterpret_cast<UCString>(L"status")));
+    pNpWindow->_pStatus = pNpWindow->_pWindowElement->FindDescendent(StrToID(reinterpret_cast<UCString>(L"statusbar")));
     pNpWindow->_pContainer = pNpWindow->_pWindowElement->FindDescendent(StrToID(reinterpret_cast<UCString>(L"container")));
     pNpWindow->_pEdit = (Edit*)pNpWindow->_pWindowElement->FindDescendent(StrToID(reinterpret_cast<UCString>(L"edit")));
     pNpWindow->_pMarkupBox = pNpWindow->_pWindowElement->FindDescendent(StrToID(reinterpret_cast<UCString>(L"markupbox")));
@@ -129,6 +130,15 @@ void NotepadWindow::OnInput(Element* elem, InputEvent* pie)
                     pie->handled = true;
                     return;
                 }
+                case VK_F8:
+                    _pEdit->SetVisible(true);
+                    if (_pEdit->GetVisible())
+                        MessageBoxW(NULL, L"VISIBLE", NULL, MB_OK);
+                    else
+                        MessageBoxW(NULL, L"NOT VISIBLE", NULL, MB_OK);
+                    ((LineNumEditElement*)_pEdit)->SyncVisible();
+                    ((LineNumEditElement*)_pEdit)->SyncRect(1 | 2, true);
+                    break;
                 }
             }
         }
@@ -196,14 +206,14 @@ void NotepadWindow::Refresh()
         {
             _pStatus->SetContentString(reinterpret_cast<UCString>(_szParseError));
 
-            // Position caret where error is
+            /*// Position caret where error is
             if (_dParseError != -1)
             {
                 int dCharIndex = (int)SendMessageW(_pEdit->GetHWND(), EM_LINEINDEX, _dParseError - 1, 0);
 
                 if (dCharIndex != -1)
                     SendMessageW(_pEdit->GetHWND(), EM_SETSEL, dCharIndex, dCharIndex + 1);
-            }
+            }*/
 
             pParser->Destroy();
         }

@@ -27,6 +27,15 @@
     <ClCompile Include="src\NotepadListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LineNumEdit\LineNumEdit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LineNumEditElement.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ClassInfo.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="DirectUI\DirectUI.def">
@@ -355,6 +364,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\NotepadListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LineNumEdit\LineNumEdit.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LineNumEditElement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

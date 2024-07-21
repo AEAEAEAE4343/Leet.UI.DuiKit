@@ -40,7 +40,7 @@ namespace DirectUI
 
 		virtual IClassInfo * GetClassInfoW(void);
 		virtual SIZE GetContentSize(int, int, Surface *);
-		virtual unsigned short const * GetContentStringAsDisplayed(UCString * *);
+		//virtual unsigned short const * GetContentStringAsDisplayed(UCString * *);
 		virtual bool IsContentProtected(void);
 		virtual unsigned int MessageCallback(LPGMSG);
 		virtual void OnInput(InputEvent *);
@@ -56,7 +56,6 @@ namespace DirectUI
 	private:
 		static IClassInfo * s_pClassInfo;
 		unsigned int GetTextHeight(void);
-		void PropertyChangedCore(const PropertyInfo*, int, Value *, HWND);
-
+		void PropertyChangedCore(const PropertyInfo*, int, Value*, HWND);
 	};
 }

@@ -29,7 +29,7 @@ namespace Notepad
 		DirectUI::Element* _pWindowElement;
 		DirectUI::Element* _pStatus;
 		DirectUI::Element* _pContainer;
-		DirectUI::Edit* _pEdit;
+		DirectUI::Element* _pEdit;
 		DirectUI::Element* _pMarkupBox;
 	};
 }}}}
