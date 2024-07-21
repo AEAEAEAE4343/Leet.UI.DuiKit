@@ -1,0 +1,3 @@
+[submodule "Notepad/LineNumEdit"]
+	path = Notepad/LineNumEdit
+	url = https://github.com/katahiromz/LineNumEdit.git
