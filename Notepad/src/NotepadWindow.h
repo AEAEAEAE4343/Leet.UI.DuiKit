@@ -28,6 +28,7 @@ namespace Notepad
 		DirectUI::NativeHWNDHost* _pNativeWindowHost = nullptr;
 		DirectUI::Element* _pWindowElement;
 		DirectUI::Element* _pStatus;
+		DirectUI::Element* _pErrorBox;
 		DirectUI::Element* _pContainer;
 		DirectUI::Element* _pEdit;
 		DirectUI::Element* _pMarkupBox;

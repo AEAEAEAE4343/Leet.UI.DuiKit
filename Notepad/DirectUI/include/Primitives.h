@@ -5,7 +5,29 @@ namespace DirectUI
 	
 	struct Fill
 	{
+		BYTE dType;
+		union
+		{
+			struct
+			{
+				COLORREF cr;
+				COLORREF cr2;
+				COLORREF cr3;
+			} ref;
 
+			struct
+			{
+				UINT uType;
+				UINT uState;
+			} fillDFC;
+
+			struct
+			{
+				HTHEME hTheme;
+				int iPartId;
+				int iStateId;
+			} fillDTB;
+		};
 	};
 
 	struct Cursor

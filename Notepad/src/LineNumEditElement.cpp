@@ -13,6 +13,14 @@
 #define SGR_CHANGEMASK (SGR_MOVE | SGR_SIZE)
 #define SGR_CONTAINER 0x0000000c
 
+#define FS_None                 0x00000000
+#define FS_Italic               0x00000001
+#define FS_Underline            0x00000002
+#define FS_StrikeOut            0x00000004
+
+#define PI_Specified    2
+#define WM_CTLLNESTATICCOLOR (WM_USER + 110)
+
 #define GM_EVENT 32768
 #define GM_SYNCADAPTOR GM_EVENT + 8
 
@@ -24,6 +32,8 @@
 DirectUI::IClassInfo* LineNumEditElement::Class = NULL;
 typedef struct GMSG_SYNCADAPTOR {
     GMSG baseMsg;
+    UINT garbage1;
+    UINT garbage2;
     UINT nCode;
 };
 
@@ -55,9 +65,55 @@ const UINT win32MouseMap[7][3] =
     {  WM_MOUSEWHEEL,       WM_MOUSEWHEEL,      WM_MOUSEWHEEL   },  // GMOUSE_WHEEL
 };
 
+class LineNumEventListener : public IElementListener 
+{
+public:
+    virtual void OnListenerAttach(class Element* elem) override {}
+    virtual void OnListenerDetach(class Element* elem) override {}
+    virtual bool OnPropertyChanging(class Element* elem, const struct PropertyInfo* prop, int unk, class Value* before, class Value* after) override 
+    {
+        return true;
+    };
+    virtual void OnListenedPropertyChanged(class Element* elem, const struct PropertyInfo* prop, int type, class Value* before, class Value* after) override
+    {
+        //((LineNumEditElement*)elem)->OnPropertyChanged(prop, type, before, after);
+    }
+    virtual void OnListenedInput(class Element* elem, struct InputEvent* event) override
+    {
+
+    }
+    virtual void OnListenedEvent(class Element* elem, struct Event* event) override 
+    {
+
+    };
+};
+
 HRESULT LineNumEditElement::Register()
 {
     return DirectUI::ClassInfo<LineNumEditElement, DirectUI::Element>::Register(GetModuleHandleW(NULL));
+}
+
+bool LineNumEditElement::GetKeyFocused()
+{
+    return true;
+}
+
+void LineNumEditElement::SetKeyFocus()
+{
+    SetFocus(_hWndSink);
+    SetFocus(_hWndCtrl);
+}
+
+UCString LineNumEditElement::GetContentStringAsDisplayed(Value** val)
+{
+    if (_hWndCtrl)
+    {
+        int charCount = GetWindowTextLengthW(_hWndCtrl);
+        UString windowText = (UString)malloc(sizeof(wchar_t) * (charCount + 1));
+        GetWindowTextW(_hWndCtrl, (LPWSTR)windowText, charCount + 1);
+        return windowText;
+    }
+    return Element::GetContentStringAsDisplayed(val);
 }
 
 UINT LineNumEditElement::MessageCallback(GMSG* pMsg)
@@ -78,11 +134,6 @@ UINT LineNumEditElement::MessageCallback(GMSG* pMsg)
                     //DUITrace("Adaptor RECT sync: <%x>\n", this);
                     SyncRect(SGR_MOVE | SGR_SIZE);
                     return DU_S_PARTIAL;
-
-                /*case GSYNC_STYLE:
-                    SyncStyle();
-                    return DU_S_PARTIAL;*/
-
                 case GSYNC_PARENT:
                     SyncParent();
                     return DU_S_PARTIAL;
@@ -92,7 +143,7 @@ UINT LineNumEditElement::MessageCallback(GMSG* pMsg)
         }
     }
 
-    return Element::MessageCallback(pMsg);
+    return DU_S_NOTHANDLED;
 }
 
 void LineNumEditElement::OnInput(InputEvent* event)
@@ -194,7 +245,7 @@ void LineNumEditElement::OnHosted(DirectUI::Element* pNewHost)
             return;
 
         _oldCtrlProc = (WNDPROC)GetWindowLongPtrW(_hWndCtrl, GWLP_WNDPROC);
-        SetWindowSubclass(_hWndCtrl, ctrlSubclassProc, (UINT_PTR)_hWndCtrl, reinterpret_cast<DWORD_PTR>(this));
+        //SetWindowSubclass(_hWndCtrl, ctrlSubclassProc, (UINT_PTR)_hWndCtrl, reinterpret_cast<DWORD_PTR>(this));
 
         // Listen for adaptor messages (needed for forwarding input)
         void(*SetGadgetStyle)(HGADGET hgadChange, UINT nNewStyle, UINT nMask) = (void(*)(HGADGET hgadChange, UINT nNewStyle, UINT nMask))GetProcAddress(GetModuleHandleW(L"duser.dll"), "SetGadgetStyle");
@@ -208,6 +259,8 @@ void LineNumEditElement::OnHosted(DirectUI::Element* pNewHost)
         SyncFont();
         SyncVisible();
         SyncText();
+
+        AddListener(new LineNumEventListener());
     }
     else
     {
@@ -218,10 +271,25 @@ void LineNumEditElement::OnHosted(DirectUI::Element* pNewHost)
 #define IsProp(a) pPi == a()
 #define PI_Local        1
 #define DUIV_UNSET         -1
-void LineNumEditElement::OnPropertyChanged(DirectUI::PropertyInfo* pPi, int index, Value* pOld, Value* pNew)
+void LineNumEditElement::OnPropertyChanged(const DirectUI::PropertyInfo* pPi, int index, Value* pOld, Value* pNew)
 {
+    // Call base
+    Element::OnPropertyChanged(pPi, index, pOld, pNew);
+
     if (_hWndCtrl)
     {
+        /*if (IsProp(SizeInLayoutProp))
+        {
+            // Update size
+            _sizeCache = *pNew->GetSize();
+            SyncRect(SGR_MOVE | SGR_SIZE, true, nullptr, nullptr);
+        } 
+        if (IsProp(PosInLayoutProp))
+        {
+            // Update position
+            _posCache = *pNew->GetPoint();
+            SyncRect(SGR_MOVE | SGR_SIZE, true, nullptr, nullptr);
+        }*/
         if (IsProp(FontFaceProp) || IsProp(FontSizeProp) || IsProp(FontWeightProp) || IsProp(FontStyleProp))
         {
             // Update font being used
@@ -250,9 +318,6 @@ void LineNumEditElement::OnPropertyChanged(DirectUI::PropertyInfo* pPi, int inde
             // Base will set focus to the display node if needed
         }
     }
-
-    // Call base
-    Element::OnPropertyChanged(pPi, index, pOld, pNew);
 }
 
 HRESULT LineNumEditElement::CreateInstance(DirectUI::Element* rootElement, unsigned long* debugVariable, DirectUI::Element** newElement)
@@ -292,11 +357,12 @@ HWND LineNumEditElement::CreateHWND(HWND hwndParent)
     return hwndEdit;
 }
 
-void LineNumEditElement::SyncRect(UINT nChangeFlags, bool bForceSync)
+void LineNumEditElement::SyncRect(UINT nChangeFlags, bool bForceSync, Value* pNewSize, Value* pNewPoint)
 {
     // Get size of gadget in container coordinates
     RECT rcConPxl; 
-    void(*GetGadgetRect)(HGADGET hgad, RECT* rectPixels, UINT nFlags) = (void(*)(HGADGET, RECT*, UINT))GetProcAddress(GetModuleHandleW(L"duser.dll"), "GetGadgetRect");
+    
+    void(*GetGadgetRect)(HGADGET hgad, RECT * rectPixels, UINT nFlags) = (void(*)(HGADGET, RECT*, UINT))GetProcAddress(GetModuleHandleW(L"duser.dll"), "GetGadgetRect");
     GetGadgetRect(GetDisplayNode(), &rcConPxl, SGR_CONTAINER);
 
     RECT rcBounds;
@@ -347,7 +413,7 @@ void LineNumEditElement::SyncRect(UINT nChangeFlags, bool bForceSync)
             if (nChangeFlags & SGR_SIZE)
             {
                 nSwpFlags |= SWP_NOMOVE;
-                SetWindowPos(_hWndCtrl, NULL, 0, 0, rcSink.right - rcSink.left, rcSink.bottom - rcSink.top, nSwpFlags | SWP_NOMOVE);
+                SetWindowPos(_hWndCtrl, NULL, 0, 0, rcSink.right - rcSink.left, rcSink.bottom - rcSink.top, nSwpFlags);
             }
 
             // TODO: implement clipping region
@@ -365,12 +431,53 @@ void LineNumEditElement::SyncParent()
 void LineNumEditElement::SyncFont()
 {
     // TODO: implement font shit
+    Value* pvFFace;
+
+    LPCWSTR pszFamily = (LPCWSTR)GetFontFace(&pvFFace);
+    int dSize = GetFontSize();
+    int dWeight = GetFontWeight();
+    int dStyle = GetFontStyle();
+    int dAngle = 0;
+
+    // Destroy record first, if exists
+    if (_hFont)
+    {
+        DeleteObject(_hFont);
+        _hFont = NULL;
+    }
+
+    // Create new font
+    LOGFONTW lf;
+    ZeroMemory(&lf, sizeof(LOGFONT));
+
+    lf.lfHeight = dSize;
+    lf.lfWeight = dWeight;
+    lf.lfItalic = (dStyle & FS_Italic) != 0;
+    lf.lfUnderline = (dStyle & FS_Underline) != 0;
+    lf.lfStrikeOut = (dStyle & FS_StrikeOut) != 0;
+    lf.lfCharSet = DEFAULT_CHARSET;
+    lf.lfQuality = DEFAULT_QUALITY;
+    lf.lfEscapement = dAngle;
+    lf.lfOrientation = dAngle;
+    wcscpy(lf.lfFaceName, pszFamily);
+
+    // Create
+    _hFont = CreateFontIndirectW(&lf);
+
+    pvFFace->Release();
+
+    // Send to control
+    SendMessageW(_hWndCtrl, WM_SETFONT, (WPARAM)_hFont, TRUE);
 }
 
 void LineNumEditElement::SyncVisible()
 {
     if (!IsDestroyed())
+    {
         ShowWindow(_hWndSink, GetVisible() ? SW_SHOW : SW_HIDE);
+        if (GetVisible())
+            SyncRect(SGR_MOVE | SGR_SIZE, true);
+    }
 }
 
 void LineNumEditElement::SyncText()
@@ -419,7 +526,57 @@ LRESULT LineNumEditElement::sinkSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam
     case WM_DESTROY:
         phh->_hWndSink = NULL;
         break;
+    case WM_CTLLNESTATICCOLOR:
+    {
+        HDC hdc = (HDC)wParam;
+        SetDCBrushColor(hdc, RGB(16, 18, 20));
+        SetBkColor(hdc, RGB(16, 18, 20));
+        SetTextColor(hdc, RGB(45, 45, 45));
+        SetDCPenColor(hdc, RGB(45, 45, 45));
+        return (LRESULT)GetStockObject(DC_BRUSH);
+    }
+    case WM_CTLCOLORSTATIC:
+    case WM_CTLCOLOREDIT:
+    {
+        HDC hdc = (HDC)wParam;
+        Value* val;
 
+        DirectUI::Fill foreground = *phh->GetForegroundColor(&val);
+        val->Release();
+
+        val = phh->GetValue(BackgroundProp, PI_Specified, NULL);
+        auto type = val->GetType();
+        switch (type)
+        {
+            // Sys color index
+        case 2:
+        {
+            int color = val->GetInt();
+            COLORREF ref = ColorFromEnumI(color);
+            val->Release();
+
+            SetDCBrushColor(hdc, ref & 0x00FFFFFF);
+            SetBkColor(hdc, ref & 0x00FFFFFF);
+            break;
+        }
+        // Fill structure
+        case 9:
+        {
+            const DirectUI::Fill* color = val->GetFill();
+
+            SetDCBrushColor(hdc, color->ref.cr & 0x00FFFFFF);
+            SetBkColor(hdc, color->ref.cr & 0x00FFFFFF);
+            break;
+        }
+        default:
+            wprintf(L"Cannot draw background value type %d!", type);
+        }
+
+        SetTextColor(hdc, foreground.ref.cr & 0x00FFFFFF);
+        SetDCPenColor(hdc, foreground.ref.cr & 0x00FFFFFF);
+
+        return (LRESULT)GetStockObject(DC_BRUSH);
+    }
     }
 
     return DefSubclassProc(hWnd, uMsg, wParam, lParam);
@@ -479,6 +636,7 @@ LRESULT LineNumEditElement::ctrlSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam
     case WM_DESTROY:
         phh->_hWndCtrl = NULL;
         break;
+
     }
     return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 }

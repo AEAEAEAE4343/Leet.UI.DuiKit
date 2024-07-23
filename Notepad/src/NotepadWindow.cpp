@@ -37,13 +37,16 @@ bool NotepadWindow::Create(NotepadWindow** pNotepadWindow, HINSTANCE moduleInsta
     pParser = NULL;
 
     // Initialize members
-    pNpWindow->_pStatus = pNpWindow->_pWindowElement->FindDescendent(StrToID(reinterpret_cast<UCString>(L"statusbar")));
+    pNpWindow->_pStatus = pNpWindow->_pWindowElement->FindDescendent(StrToID(reinterpret_cast<UCString>(L"status")));
+    pNpWindow->_pErrorBox = pNpWindow->_pWindowElement->FindDescendent(StrToID(reinterpret_cast<UCString>(L"errorbox")));
     pNpWindow->_pContainer = pNpWindow->_pWindowElement->FindDescendent(StrToID(reinterpret_cast<UCString>(L"container")));
     pNpWindow->_pEdit = (Edit*)pNpWindow->_pWindowElement->FindDescendent(StrToID(reinterpret_cast<UCString>(L"edit")));
     pNpWindow->_pMarkupBox = pNpWindow->_pWindowElement->FindDescendent(StrToID(reinterpret_cast<UCString>(L"markupbox")));
     DUIAssert(pNpWindow->_pStatus && pNpWindow->_pContainer && pNpWindow->_pEdit && pNpWindow->_pMarkupBox, "Error in embedded DUIXML file.");
 
-    pNpWindow->_pStatus->SetContentString(reinterpret_cast<UCString>(L"Enter UI Markup (F5=Refresh, F6/F7=Font Size)"));
+    pNpWindow->_pErrorBox->SetVisible(false);
+    pNpWindow->_pErrorBox->SetLayoutPos(-3); // none
+
     pNpWindow->_pWindowElement->EndDefer(defer_key);
 
     // Set visible and add event handlers
@@ -131,13 +134,8 @@ void NotepadWindow::OnInput(Element* elem, InputEvent* pie)
                     return;
                 }
                 case VK_F8:
-                    _pEdit->SetVisible(true);
-                    if (_pEdit->GetVisible())
-                        MessageBoxW(NULL, L"VISIBLE", NULL, MB_OK);
-                    else
-                        MessageBoxW(NULL, L"NOT VISIBLE", NULL, MB_OK);
-                    ((LineNumEditElement*)_pEdit)->SyncVisible();
-                    ((LineNumEditElement*)_pEdit)->SyncRect(1 | 2, true);
+                    const wchar_t* string = L"\x1b[1;31mAAAAAAAAAA";
+                    _pStatus->SetContentString((UCString)string);
                     break;
                 }
             }
@@ -176,14 +174,16 @@ void NotepadWindow::Refresh()
     // Remove all children from container
     _pContainer->DestroyAll(true);
 
-    Value* pv;
+    Value* pv = nullptr;
 
     // Parse text from Edit control
-    LPCWSTR pTextW = reinterpret_cast<LPCWSTR>(_pEdit->GetContentString(&pv));
+    LPCWSTR pTextW = reinterpret_cast<LPCWSTR>(((LineNumEditElement*)_pEdit)->GetContentStringAsDisplayed(&pv));
 
     // Convert to single byte for parser
     if (lstrlenW(pTextW) > 0)
     {
+        _szParseError[0] = 0;
+
         DUIXmlParser* pParser;
         bool showBox = false;
         HRESULT hr = DUIXmlParser::Create(&pParser, NULL, NULL, ParserErrorHandler, &showBox);
@@ -193,19 +193,13 @@ void NotepadWindow::Refresh()
         {
             Element* pe = nullptr;
             pParser->CreateElement(reinterpret_cast<UCString>(L"main"), NULL, NULL, 0, &pe);
-            if (!pe)
-                _pStatus->SetContentString(reinterpret_cast<UCString>(_szParseError));
-            else
+            if (pe)
             {
                 DirectUIElementAdd(_pContainer, pe);
-
-                _pStatus->SetContentString(reinterpret_cast<UCString>(L"Parse successful!"));
             }
         }
         else
         {
-            _pStatus->SetContentString(reinterpret_cast<UCString>(_szParseError));
-
             /*// Position caret where error is
             if (_dParseError != -1)
             {
@@ -219,7 +213,26 @@ void NotepadWindow::Refresh()
         }
     }
 
-    pv->Release();
+    if (_szParseError[0])
+    {
+        _pStatus->SetContentString(reinterpret_cast<UCString>(L"Failed"));
+        _pStatus->SetForegroundColor(RGB(128, 0, 0));
+        _pErrorBox->SetContentString(reinterpret_cast<UCString>(_szParseError));
+        _pErrorBox->SetVisible(true);
+        _pErrorBox->SetLayoutPos(1); // bottom
+    }
+    else
+    {
+        _pStatus->SetContentString(reinterpret_cast<UCString>(L"Successful"));
+        _pStatus->SetForegroundColor(RGB(0, 128, 0));
+        _pErrorBox->SetVisible(false);
+        _pErrorBox->SetLayoutPos(-3); // none
+    }
+
+    if (pv)
+        pv->Release();
+    else
+        free((LPWSTR)pTextW);
 
     _pWindowElement->EndDefer(defer);
 }
