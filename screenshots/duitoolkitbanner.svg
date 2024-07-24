@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="1482.549mm"
+   height="301.18799mm"
+   viewBox="0 0 5253.1262 1067.2015"
+   id="svg4272"
+   version="1.1"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   sodipodi:docname="duitoolkitbanner.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs4274">
+    <filter
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Drop Shadow"
+       id="filter969"
+       x="-0.0336"
+       y="-0.038753609"
+       width="1.0672"
+       height="1.0982267">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood959" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite961" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="14"
+         result="blur"
+         id="feGaussianBlur963" />
+      <feOffset
+         dx="0"
+         dy="17.9641"
+         result="offset"
+         id="feOffset965" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite967" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter922"
+       x="-0.0082004347"
+       y="-0.053449801"
+       width="1.0164009"
+       height="1.1354763">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood912" />
+      <feComposite
+         in="SourceGraphic"
+         in2="flood"
+         operator="in"
+         result="composite1"
+         id="feComposite914" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="14"
+         result="blur"
+         id="feGaussianBlur916" />
+      <feOffset
+         dx="0"
+         dy="17.9641"
+         result="offset"
+         id="feOffset918" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite920" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.125"
+     inkscape:cx="3311.9999"
+     inkscape:cy="-603.99998"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="25"
+     fit-margin-bottom="0"
+     inkscape:window-width="1920"
+     inkscape:window-height="1129"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:pagecheckerboard="0"
+     width="1750mm"
+     inkscape:showpageshadow="2"
+     inkscape:deskcolor="#d1d1d1" />
+  <metadata
+     id="metadata4277">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-231.73769,196.93505)">
+    <g
+       id="g1"
+       transform="translate(38.269357)">
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:480px;line-height:1.25;font-family:FranklinGothic;-inkscape-font-specification:FranklinGothic;stroke-width:0.9375;filter:url(#filter922)"
+         x="1287.4532"
+         y="583.83087"
+         id="text2645"><tspan
+           sodipodi:role="line"
+           id="tspan2643"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:480px;font-family:'Franklin Gothic';-inkscape-font-specification:'Franklin Gothic';letter-spacing:-28.125px;stroke-width:0.9375"
+           x="1287.4532"
+           y="583.83087">Direct UI Toolkit</tspan><tspan
+           sodipodi:role="line"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:480px;font-family:FranklinGothic;-inkscape-font-specification:FranklinGothic;stroke-width:0.9375"
+           x="1287.4532"
+           y="1183.8308"
+           id="tspan13933" /><tspan
+           sodipodi:role="line"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:480px;font-family:FranklinGothic;-inkscape-font-specification:FranklinGothic;stroke-width:0.9375"
+           x="1287.4532"
+           y="1783.8308"
+           id="tspan9587" /></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:240px;line-height:1.25;font-family:sans-serif;stroke-width:0.9375;filter:url(#filter922)"
+       x="1315.9303"
+       y="182.31305"
+       id="text30724"><tspan
+         sodipodi:role="line"
+         id="tspan30722"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:240px;font-family:'Franklin Gothic Book';-inkscape-font-specification:'Franklin Gothic Book, ';stroke-width:0.9375"
+         x="1315.9303"
+         y="182.31305">Leet's</tspan></text>
+  </g>
+</svg>
