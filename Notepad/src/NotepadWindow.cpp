@@ -2,6 +2,7 @@
 #include "util.h"
 #include "NotepadListener.h"
 #include "LineNumEditElement.h"
+#include <shobjidl_core.h>
 
 using namespace Leet::UI::DuiKit::Notepad;
 using namespace DirectUI;
@@ -37,10 +38,12 @@ bool NotepadWindow::Create(NotepadWindow** pNotepadWindow, HINSTANCE moduleInsta
     pParser = NULL;
 
     // Initialize members
+    pNpWindow->_pParseButton = (Button*)pNpWindow->_pWindowElement->FindDescendent(StrToID(reinterpret_cast<UCString>(L"parsebutton")));
+    pNpWindow->_pAutoUpdateCheck = (CCCheckBox*)pNpWindow->_pWindowElement->FindDescendent(StrToID(reinterpret_cast<UCString>(L"autoupdatecheck")));
     pNpWindow->_pStatus = pNpWindow->_pWindowElement->FindDescendent(StrToID(reinterpret_cast<UCString>(L"status")));
     pNpWindow->_pErrorBox = pNpWindow->_pWindowElement->FindDescendent(StrToID(reinterpret_cast<UCString>(L"errorbox")));
     pNpWindow->_pContainer = pNpWindow->_pWindowElement->FindDescendent(StrToID(reinterpret_cast<UCString>(L"container")));
-    pNpWindow->_pEdit = (Edit*)pNpWindow->_pWindowElement->FindDescendent(StrToID(reinterpret_cast<UCString>(L"edit")));
+    pNpWindow->_pEdit = pNpWindow->_pWindowElement->FindDescendent(StrToID(reinterpret_cast<UCString>(L"edit")));
     pNpWindow->_pMarkupBox = pNpWindow->_pWindowElement->FindDescendent(StrToID(reinterpret_cast<UCString>(L"markupbox")));
     DUIAssert(pNpWindow->_pStatus && pNpWindow->_pContainer && pNpWindow->_pEdit && pNpWindow->_pMarkupBox, "Error in embedded DUIXML file.");
 
@@ -70,6 +73,44 @@ void Leet::UI::DuiKit::Notepad::NotepadWindow::SetMenu(HMENU menu)
     ::SetMenu(GetWindowHandle(), menu);
 }
 
+COMDLG_FILTERSPEC rgSpec[] =
+{
+    { L"DUIXML files", L"*.duixml;*.xml"},
+    { L"Any files", L"*"},
+};
+
+bool memcpy_swapped(void* dst, void* src, size_t count)
+{
+    // Must be even
+    if (count & 1)
+        return false;
+
+    for (size_t i = 0; i < count; i += 2)
+    {
+        ((char*)dst)[i + 0] = ((char*)src)[i + 1];
+        ((char*)dst)[i + 1] = ((char*)src)[i + 0];
+    }
+}
+
+INT_PTR AboutDialogProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+    if (uMsg == WM_INITDIALOG)
+    {
+        HANDLE image = LoadImageW(GetModuleHandleW(NULL), MAKEINTRESOURCE(IDB_BITMAP1), IMAGE_BITMAP, 0, 0, LR_DEFAULTCOLOR);
+        HWND hwndStatic = GetDlgItem(hWnd, IDC_STATIC2);
+        SendMessage(hwndStatic, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)image);
+    }
+    if (uMsg == WM_COMMAND)
+    {
+        if (wParam == IDOK)
+        {
+            EndDialog(hWnd, TRUE);
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
 bool Leet::UI::DuiKit::Notepad::NotepadWindow::HandleMenuMessage(HWND hWnd, int message, WPARAM wParam, LPARAM lParam)
 {
     if (hWnd == GetWindowHandle() && message == WM_COMMAND)
@@ -79,11 +120,215 @@ bool Leet::UI::DuiKit::Notepad::NotepadWindow::HandleMenuMessage(HWND hWnd, int 
         switch (wmId)
         {
         case ID_FILE_OPEN:
-            MessageBoxA(hWnd, "Open", NULL, MB_OK);
+        {
+            IFileOpenDialog* pfd;
+
+            // CoCreate the dialog object.
+            HRESULT hr = CoCreateInstance(CLSID_FileOpenDialog,
+                NULL,
+                CLSCTX_INPROC_SERVER,
+                IID_PPV_ARGS(&pfd));
+
+            if (!SUCCEEDED(hr))
+                return true;
+
+            DWORD dwOptions;
+            hr = pfd->GetOptions(&dwOptions);
+            if (SUCCEEDED(hr))
+            {
+                hr = pfd->SetOptions(dwOptions | FOS_STRICTFILETYPES | FOS_FORCEFILESYSTEM | FOS_FILEMUSTEXIST);
+            }
+
+            if (!SUCCEEDED(hr))
+                return true;
+
+            hr = pfd->SetFileTypes(2, rgSpec);
+
+            if (!SUCCEEDED(hr))
+                return true;
+
+            // Show the Open dialog.
+            hr = pfd->Show(NULL);
+
+            if (SUCCEEDED(hr))
+            {
+                // Obtain the result of the user interaction.
+                IShellItem* psiResult;
+                hr = pfd->GetResult(&psiResult);
+
+                if (SUCCEEDED(hr))
+                {
+                    //
+                    // You can add your own code here to handle the results.
+                    //
+                    PWSTR pszFilePath = NULL;
+                    hr = psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+                    if (!SUCCEEDED(hr) || !pszFilePath)
+                        return true;
+
+                    HANDLE file = CreateFileW(pszFilePath, FILE_GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+                    if (!file)
+                        return true;
+
+                    LARGE_INTEGER fileSize;
+                    GetFileSizeEx(file, &fileSize);
+
+                    HANDLE hMapSrcFile = CreateFileMappingW(file, NULL, PAGE_READONLY, 0, 0, NULL);
+                    if (!hMapSrcFile)
+                    {
+                        CloseHandle(file);
+                        return true;
+                    }
+
+                    PBYTE pSrcFile = (PBYTE)MapViewOfFile(hMapSrcFile, FILE_MAP_READ, 0, 0, 0);
+
+                    char* text;
+                    // If the second and fourth byte are 0        -> UTF-16 LE without BOM
+                    if (pSrcFile[0] && !pSrcFile[1] && pSrcFile[2] && !pSrcFile[3])
+                    {
+                        text = (char*)malloc(fileSize.QuadPart + 2);
+                        memcpy_s(text, fileSize.QuadPart, pSrcFile, fileSize.QuadPart);
+                        text[fileSize.QuadPart] = 0;
+                        text[fileSize.QuadPart + 1] = 0;
+                    }
+                    // If the first and third byte are 0          -> UTF-16 BE without BOM
+                    else if (!pSrcFile[0] && pSrcFile[1] && !pSrcFile[2] && pSrcFile[3])
+                    {
+                        text = (char*)malloc(fileSize.QuadPart + 2);
+                        memcpy_swapped(text, pSrcFile, fileSize.QuadPart);
+                        text[fileSize.QuadPart] = 0;
+                        text[fileSize.QuadPart + 1] = 0;
+                    }
+                    // If there is a BOM 0xFF, 0xFE (LE)          -> UTF-16 LE with BOM
+                    else if (pSrcFile[0] == 0xFF && pSrcFile[1] == 0xFE)
+                    {
+                        text = (char*)malloc(fileSize.QuadPart);
+                        memcpy_s(text, fileSize.QuadPart - 2, pSrcFile + 2, fileSize.QuadPart - 2);
+                        text[fileSize.QuadPart - 2] = 0;
+                        text[fileSize.QuadPart - 1] = 0;
+                    }
+                    // If there is a BOM 0xFE, 0xFF (BE)          -> UTF-16 BE with BOM
+                    else if (pSrcFile[0] == 0xFE && pSrcFile[1] == 0xFF) 
+                    {
+                        text = (char*)malloc(fileSize.QuadPart);
+                        memcpy_swapped(text, pSrcFile + 2, fileSize.QuadPart - 2);
+                        text[fileSize.QuadPart - 2] = 0;
+                        text[fileSize.QuadPart - 1] = 0;
+                    }
+                    // If there is a BOM 0xEF, 0xBB, 0xBF         -> UTF-8 with BOM
+                    else if (pSrcFile[0] == 0xEF && pSrcFile[1] == 0xBB && pSrcFile[2] == 0xBF)
+                    {
+                        int sizeReq = MultiByteToWideChar(CP_UTF8, MB_PRECOMPOSED, (PCHAR)(pSrcFile + 3), fileSize.QuadPart - 3, 0, 0);
+                        text = (char*)malloc(sizeof(wchar_t) * (sizeReq + 2));
+                        MultiByteToWideChar(CP_UTF8, MB_PRECOMPOSED, (PCHAR)(pSrcFile + 3), fileSize.QuadPart - 3, (LPWSTR)text, sizeReq);
+                        text[sizeReq * 2] = 0;
+                        text[sizeReq * 2 + 1] = 0;
+                    }
+                    // Otherwise assume UTF-8 (screw ANSI)
+                    else
+                    {
+                        int sizeReq = MultiByteToWideChar(CP_UTF8, MB_PRECOMPOSED, (PCHAR)pSrcFile, fileSize.QuadPart, 0, 0);
+                        text = (char*)malloc(sizeof(wchar_t) * (sizeReq + 2));
+                        MultiByteToWideChar(CP_UTF8, MB_PRECOMPOSED, (PCHAR)pSrcFile, fileSize.QuadPart, (LPWSTR)text, sizeReq);
+                        text[sizeReq * 2] = 0;
+                        text[sizeReq * 2 + 1] = 0;
+                    }
+
+                    _pEdit->SetContentString((UCString)text);
+                    free(text);
+
+                    UnmapViewOfFile(pSrcFile);
+                    CloseHandle(file);
+
+                    CoTaskMemFree(pszFilePath);
+                    psiResult->Release();
+                }
+
+            }
             return true;
+        }
         case ID_FILE_SAVE:
-            MessageBoxA(hWnd, "Save", NULL, MB_OK);
+        {
+            IFileSaveDialog* pfd;
+
+            // CoCreate the dialog object.
+            HRESULT hr = CoCreateInstance(CLSID_FileSaveDialog,
+                NULL,
+                CLSCTX_INPROC_SERVER,
+                IID_PPV_ARGS(&pfd));
+
+            if (!SUCCEEDED(hr))
+                return true;
+
+            DWORD dwOptions;
+            hr = pfd->GetOptions(&dwOptions);
+            if (SUCCEEDED(hr))
+            {
+                hr = pfd->SetOptions(dwOptions | FOS_STRICTFILETYPES | FOS_FORCEFILESYSTEM);
+            }
+
+            if (!SUCCEEDED(hr))
+                return true;
+
+            hr = pfd->SetFileTypes(2, rgSpec);
+
+            if (!SUCCEEDED(hr))
+                return true;
+
+            // Show the Open dialog.
+            hr = pfd->Show(NULL);
+
+            if (SUCCEEDED(hr))
+            {
+                // Obtain the result of the user interaction.
+                IShellItem* psiResult;
+                hr = pfd->GetResult(&psiResult);
+
+                if (SUCCEEDED(hr))
+                {
+                    //
+                    // You can add your own code here to handle the results.
+                    //
+                    PWSTR pszFilePath = NULL;
+                    hr = psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+                    if (!SUCCEEDED(hr) || !pszFilePath)
+                        return true;
+
+                    HANDLE file = CreateFileW(pszFilePath, FILE_GENERIC_WRITE | FILE_GENERIC_READ, NULL, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+                    if (!file)
+                        return true;
+
+                    Value* val = nullptr;
+                    const wchar_t* text = (const wchar_t*)_pEdit->GetContentStringAsDisplayed(&val);
+
+                    LARGE_INTEGER fileSize;
+                    fileSize.QuadPart = sizeof(wchar_t) * lstrlenW(text);
+
+                    HANDLE hMapDstFile = CreateFileMappingW(file, NULL, PAGE_READWRITE, fileSize.HighPart, fileSize.LowPart, NULL);
+                    if (!hMapDstFile)
+                    {
+                        CloseHandle(file);
+                        return true;
+                    }
+
+                    PBYTE pDstFile = (PBYTE)MapViewOfFile(hMapDstFile, FILE_MAP_WRITE, 0, 0, 0);
+                    memcpy_s(pDstFile, fileSize.QuadPart, text, fileSize.QuadPart);
+                    if (val) val->Release();
+                    else free((void*)text);
+
+                    UnmapViewOfFile(pDstFile);
+                    CloseHandle(file);
+
+                    CoTaskMemFree(pszFilePath);
+                    psiResult->Release();
+                }
+
+            }
             return true;
+        }
+        case ID_HELP_ABOUT:
+            DialogBoxParamW(GetModuleHandleW(NULL), MAKEINTRESOURCE(IDD_DIALOG1), GetWindowHandle(), AboutDialogProcedure, NULL);
+            break;
         }
     }
 
@@ -107,8 +352,16 @@ void NotepadWindow::OnInput(Element* elem, InputEvent* pie)
             {
                 switch (pke->ch)
                 {
+                case 'R':
+                    if (!(GetAsyncKeyState(VK_CONTROL) & 0x8000))
+                        break;
                 case VK_F5:     // Refresh
-                    Refresh();
+                    Refresh(true);
+
+                    pie->handled = true;
+                    return;
+                case VK_F13:
+                    if (_pAutoUpdateCheck->GetSelected()) Refresh(false);
 
                     pie->handled = true;
                     return;
@@ -133,10 +386,6 @@ void NotepadWindow::OnInput(Element* elem, InputEvent* pie)
                     pie->handled = true;
                     return;
                 }
-                case VK_F8:
-                    const wchar_t* string = L"\x1b[1;31mAAAAAAAAAA";
-                    _pStatus->SetContentString((UCString)string);
-                    break;
                 }
             }
         }
@@ -145,7 +394,14 @@ void NotepadWindow::OnInput(Element* elem, InputEvent* pie)
 
 void NotepadWindow::OnEvent(Element* elem, Event* pEvent)
 {
-    if (pEvent->flag == GMF_BUBBLED)
+    if (pEvent->type == DirectUI::Button::Click)
+    {
+        if (pEvent->target == _pParseButton)
+        {
+            Refresh(true);
+        }
+    }
+    else if (pEvent->flag == GMF_BUBBLED)
     {
         if (pEvent->type == Thumb::Drag)
         {
@@ -166,7 +422,7 @@ void NotepadWindow::OnEvent(Element* elem, Event* pEvent)
 }
 
 
-void NotepadWindow::Refresh()
+void NotepadWindow::Refresh(bool showError)
 {
     unsigned long defer;
     _pWindowElement->StartDefer(&defer);
@@ -217,9 +473,12 @@ void NotepadWindow::Refresh()
     {
         _pStatus->SetContentString(reinterpret_cast<UCString>(L"Failed"));
         _pStatus->SetForegroundColor(RGB(128, 0, 0));
-        _pErrorBox->SetContentString(reinterpret_cast<UCString>(_szParseError));
-        _pErrorBox->SetVisible(true);
-        _pErrorBox->SetLayoutPos(1); // bottom
+        if (showError)
+        {
+            _pErrorBox->SetContentString(reinterpret_cast<UCString>(_szParseError));
+            _pErrorBox->SetVisible(true);
+            _pErrorBox->SetLayoutPos(3); // bottom
+        }
     }
     else
     {

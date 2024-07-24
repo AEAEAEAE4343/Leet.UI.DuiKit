@@ -378,4 +378,21 @@
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="src\bitmap1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="duinotepadbanner.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\duinotepadbanner.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="duinotepadbanner.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\duinotepadbanner.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

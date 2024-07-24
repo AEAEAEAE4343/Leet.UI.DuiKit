@@ -1,9 +1,7 @@
 // Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
-#define APSTUDIO_READONLY_SYMBOLS
 #include <winres.h>
-#undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
 // English (United States) resources
@@ -64,6 +62,66 @@ BEGIN
         MENUITEM "About",                       ID_HELP_ABOUT
     END
 END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIALOG1 DIALOGEX 0, 0, 275, 176
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Leet's DUI Notepad"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,219,155,50,14
+    LTEXT           "Leet's DUI Notepad\r\nVersion 1.0\r\n\r\n\r\nThis program is free software: you can redistribute it and/or modify it under the terms of the Simple Classic Theme License as published by Anis Errais (Leet), either version 1.0 of the License, or any later version.\r\n",IDC_STATIC,7,71,244,68
+    CONTROL         "",IDC_STATIC2,"Static",SS_BITMAP,0,0,276,46
+    LTEXT           "",IDC_STATIC,0,47,276,2,SS_SUNKEN
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_DIALOG1, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 169
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_DIALOG1 AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// PNG
+//
+
+IDB_PNG1                PNG                     "duinotepadbanner.png"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BITMAP1             BITMAP                  "duinotepadbanner.bmp"
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////

@@ -29,7 +29,6 @@ protected:
     virtual HWND CreateHWND(HWND hwndParent);
 
 private:
-    void SyncParent();
     void SyncFont();
     void SyncText();
 

@@ -18,7 +18,6 @@ namespace DirectUI
 
 		void Destroy() override
 		{
-			MessageBoxW(0, L"destroy clsinfo", 0, 0);
 			delete this;
 			Class::Class = NULL;
 		}

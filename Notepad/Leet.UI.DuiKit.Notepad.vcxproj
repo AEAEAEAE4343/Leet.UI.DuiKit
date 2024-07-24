@@ -257,6 +257,13 @@
   <ItemGroup>
     <ResourceCompile Include="src\duinotepad.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="duinotepadbanner.bmp" />
+    <Image Include="duinotepadbanner.png" />
+    <Image Include="src\bitmap1.bmp" />
+    <Image Include="src\duinotepadbanner.bmp" />
+    <Image Include="src\duinotepadbanner.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

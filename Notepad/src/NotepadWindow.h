@@ -20,12 +20,15 @@ namespace Notepad
 		void OnInput(DirectUI::Element* elem, struct DirectUI::InputEvent* pie);
 		void OnEvent(DirectUI::Element* elem, struct DirectUI::Event* pEvent);
 
-		void Refresh();
+		void Refresh(bool showError);
 	private:
 		NotepadWindow();
 
+		bool ctrlPressed = false;
 		HINSTANCE _modInstance;
 		DirectUI::NativeHWNDHost* _pNativeWindowHost = nullptr;
+		DirectUI::Button* _pParseButton;
+		DirectUI::CCCheckBox* _pAutoUpdateCheck;
 		DirectUI::Element* _pWindowElement;
 		DirectUI::Element* _pStatus;
 		DirectUI::Element* _pErrorBox;

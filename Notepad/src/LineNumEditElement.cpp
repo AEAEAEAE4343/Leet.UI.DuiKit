@@ -18,6 +18,10 @@
 #define FS_Underline            0x00000002
 #define FS_StrikeOut            0x00000004
 
+#define IsProp(a) pPi == a()
+#define DUIV_UNSET         -1
+
+#define PI_Local        1
 #define PI_Specified    2
 #define WM_CTLLNESTATICCOLOR (WM_USER + 110)
 
@@ -29,12 +33,20 @@
 #define DU_S_PARTIAL MAKE_HRESULT(SEVERITY_SUCCESS, FACILITY_DUSER, 2)
 
 #define GS_ADAPTOR          0x00004000      // Requires extra notifications to host
+
 DirectUI::IClassInfo* LineNumEditElement::Class = NULL;
 typedef struct GMSG_SYNCADAPTOR {
     GMSG baseMsg;
     UINT garbage1;
     UINT garbage2;
     UINT nCode;
+};
+
+struct KeyboardEvent : InputEvent
+{
+    WCHAR ch;
+    WORD cRep;
+    WORD wFlags;
 };
 
 typedef struct MouseEvent : InputEvent
@@ -131,11 +143,9 @@ UINT LineNumEditElement::MessageCallback(GMSG* pMsg)
                 {
                 case GSYNC_RECT:
                 case GSYNC_XFORM:
-                    //DUITrace("Adaptor RECT sync: <%x>\n", this);
-                    SyncRect(SGR_MOVE | SGR_SIZE);
-                    return DU_S_PARTIAL;
+                case GSYNC_STYLE:
                 case GSYNC_PARENT:
-                    SyncParent();
+                    SyncRect(SGR_MOVE | SGR_SIZE);
                     return DU_S_PARTIAL;
                 }
             }
@@ -148,59 +158,7 @@ UINT LineNumEditElement::MessageCallback(GMSG* pMsg)
 
 void LineNumEditElement::OnInput(InputEvent* event)
 {
-    if (event->flag == GMF_DIRECT && _oldCtrlProc && !IsDestroyed())  // Handle when direct
-    {
-        switch (event->device)
-        {
-        case GINPUT_MOUSE:
-        {
-            MouseEvent* mouseEvent = (MouseEvent*)event;
 
-            // Check if we can map this message to a HWND message
-            if ((mouseEvent->code < GMOUSE_MOVE) || (mouseEvent->code > GMOUSE_WHEEL))
-            {
-                // TODO: error handling?
-                break;
-            }
-
-            // Convert the button id to an index
-            int iButton;
-            if (mouseEvent->bButton == GBUTTON_NONE) break;
-            else iButton = mouseEvent->bButton - 1;
-
-            // Check if we can map this button to a HWND mouse button
-            if ((iButton < 0) || (iButton > 2))
-            {
-                // TODO: error handling
-                break;
-            }
-
-            // Map gadget message into HWND message
-            UINT uMsg = win32MouseMap[mouseEvent->code][iButton];
-            LPARAM lParam = (LPARAM)POINTTOPOINTS(mouseEvent->ptClientPxl);
-            WPARAM wParam = NULL;
-            switch (mouseEvent->code)
-            {
-            case GMOUSE_DOWN:
-                if (((MouseClickEvent*)event)->cClicks == 1) {
-                    uMsg += (WM_LBUTTONDBLCLK - WM_LBUTTONDOWN);
-                }
-            case GMOUSE_MOVE:
-            case GMOUSE_UP:
-            case GMOUSE_HOVER:
-            case GMOUSE_DRAG:
-                wParam = mouseEvent->nFlags;
-                break;
-            case GMOUSE_WHEEL:
-                wParam = MAKEWPARAM((WORD)mouseEvent->nFlags, (WORD)(short)(((MouseWheelEvent*)event)->sWheel));
-                break;
-            }
-
-            CallWindowProcW(_oldCtrlProc, _hWndCtrl, uMsg, wParam, lParam);
-            event->handled = true;
-        }
-        }
-    }
 }
 
 void LineNumEditElement::OnHosted(DirectUI::Element* pNewHost)
@@ -245,7 +203,7 @@ void LineNumEditElement::OnHosted(DirectUI::Element* pNewHost)
             return;
 
         _oldCtrlProc = (WNDPROC)GetWindowLongPtrW(_hWndCtrl, GWLP_WNDPROC);
-        //SetWindowSubclass(_hWndCtrl, ctrlSubclassProc, (UINT_PTR)_hWndCtrl, reinterpret_cast<DWORD_PTR>(this));
+        SetWindowSubclass(_hWndCtrl, ctrlSubclassProc, (UINT_PTR)_hWndCtrl, reinterpret_cast<DWORD_PTR>(this));
 
         // Listen for adaptor messages (needed for forwarding input)
         void(*SetGadgetStyle)(HGADGET hgadChange, UINT nNewStyle, UINT nMask) = (void(*)(HGADGET hgadChange, UINT nNewStyle, UINT nMask))GetProcAddress(GetModuleHandleW(L"duser.dll"), "SetGadgetStyle");
@@ -255,7 +213,6 @@ void LineNumEditElement::OnHosted(DirectUI::Element* pNewHost)
 
         // Synchronize the state of the HWND to the current state of Element
         SyncRect(SGR_MOVE | SGR_SIZE);
-        SyncParent();
         SyncFont();
         SyncVisible();
         SyncText();
@@ -268,9 +225,6 @@ void LineNumEditElement::OnHosted(DirectUI::Element* pNewHost)
     }
 }
 
-#define IsProp(a) pPi == a()
-#define PI_Local        1
-#define DUIV_UNSET         -1
 void LineNumEditElement::OnPropertyChanged(const DirectUI::PropertyInfo* pPi, int index, Value* pOld, Value* pNew)
 {
     // Call base
@@ -278,18 +232,6 @@ void LineNumEditElement::OnPropertyChanged(const DirectUI::PropertyInfo* pPi, in
 
     if (_hWndCtrl)
     {
-        /*if (IsProp(SizeInLayoutProp))
-        {
-            // Update size
-            _sizeCache = *pNew->GetSize();
-            SyncRect(SGR_MOVE | SGR_SIZE, true, nullptr, nullptr);
-        } 
-        if (IsProp(PosInLayoutProp))
-        {
-            // Update position
-            _posCache = *pNew->GetPoint();
-            SyncRect(SGR_MOVE | SGR_SIZE, true, nullptr, nullptr);
-        }*/
         if (IsProp(FontFaceProp) || IsProp(FontSizeProp) || IsProp(FontWeightProp) || IsProp(FontStyleProp))
         {
             // Update font being used
@@ -350,7 +292,7 @@ HRESULT LineNumEditElement::CreateInstance(DirectUI::Element* rootElement, unsig
 
 HWND LineNumEditElement::CreateHWND(HWND hwndParent)
 {
-    int dwStyle = WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL | ES_MULTILINE;
+    int dwStyle = WS_CHILD | WS_VISIBLE | WS_HSCROLL | ES_MULTILINE | WS_VSCROLL;
 
     HWND hwndEdit = CreateWindowExW(0, L"LineNumEdit", NULL, dwStyle, 0, 0, GetWidth(), GetHeight(), hwndParent, (HMENU)1, NULL, NULL);
     
@@ -420,12 +362,6 @@ void LineNumEditElement::SyncRect(UINT nChangeFlags, bool bForceSync, Value* pNe
         }
     }
 
-}
-
-void LineNumEditElement::SyncParent()
-{
-    // this is needed, don't ask why
-    SyncRect(SGR_MOVE | SGR_SIZE);
 }
 
 void LineNumEditElement::SyncFont()
@@ -535,6 +471,19 @@ LRESULT LineNumEditElement::sinkSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam
         SetDCPenColor(hdc, RGB(45, 45, 45));
         return (LRESULT)GetStockObject(DC_BRUSH);
     }
+    case WM_COMMAND:
+        if (HIWORD(wParam) == EN_CHANGE)
+        {
+            ::KeyboardEvent keyEvent;
+            keyEvent.flag = GMF_DIRECT;
+            keyEvent.device = GINPUT_KEYBOARD;
+            keyEvent.ch = VK_F13;
+            keyEvent.code = (DUSER_INPUT_CODE)0;
+            if (keyEvent.code > 2) keyEvent.code = (DUSER_INPUT_CODE)(keyEvent.code - 1);
+
+            phh->GetRoot()->OnInput(&keyEvent);
+        }
+        break;
     case WM_CTLCOLORSTATIC:
     case WM_CTLCOLOREDIT:
     {
@@ -586,7 +535,7 @@ LRESULT LineNumEditElement::ctrlSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam
 {
     LineNumEditElement* phh = (LineNumEditElement*)dwRefData;
     LRESULT result;
-    BOOL(*ForwardGadgetMessage)(HGADGET hgadRoot, UINT nMsg, WPARAM wParam, LPARAM lParam, LRESULT * pr) = (BOOL(*)(HGADGET, UINT, WPARAM, LPARAM, LRESULT*))GetProcAddress(GetModuleHandleW(L"duser.dll"), "ForwardGadgetMessage");;
+    BOOL(*ForwardGadgetMessage)(HGADGET hgadRoot, UINT nMsg, WPARAM wParam, LPARAM lParam, LRESULT * pr) = (BOOL(*)(HGADGET, UINT, WPARAM, LPARAM, LRESULT*))GetProcAddress(GetModuleHandleW(L"duser.dll"), "ForwardGadgetMessage");
 
     switch (uMsg)
     {
@@ -596,38 +545,19 @@ LRESULT LineNumEditElement::ctrlSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam
     case WM_SYSKEYDOWN:
     case WM_SYSKEYUP:
     case WM_SYSCHAR:
-    case WM_KILLFOCUS:
-        if (ForwardGadgetMessage(phh->GetDisplayNode(), uMsg, wParam, lParam, &result))
-            return result;
+        if (wParam == VK_F5 || wParam == VK_F6 || wParam == VK_F7 || wParam == 'R')
+        {
+            ::KeyboardEvent keyEvent;
+            keyEvent.flag = GMF_DIRECT;
+            keyEvent.device = GINPUT_KEYBOARD;
+            keyEvent.ch = wParam;
+            keyEvent.code = (DUSER_INPUT_CODE)(uMsg - WM_KEYDOWN);
+            if (keyEvent.code > 2) keyEvent.code = (DUSER_INPUT_CODE)(keyEvent.code - 1);
+
+            phh->GetRoot()->OnInput(&keyEvent);
+        }
+        ForwardGadgetMessage(phh->GetDisplayNode(), uMsg, wParam, lParam, &result);
         break;
-
-    case WM_MOUSEMOVE:
-    case WM_LBUTTONDOWN:
-    case WM_LBUTTONUP:
-    case WM_LBUTTONDBLCLK:
-    case WM_RBUTTONDOWN:
-    case WM_RBUTTONUP:
-    case WM_RBUTTONDBLCLK:
-    case WM_MBUTTONDOWN:
-    case WM_MBUTTONUP:
-    case WM_MBUTTONDBLCLK:
-    case WM_MOUSEHOVER:
-    case WM_MOUSEWHEEL:
-    {
-        HWND hwndRoot = ::GetParent(phh->_hWndSink);
-
-        POINT ptRoot;
-        ptRoot.x = GET_X_LPARAM(lParam);
-        ptRoot.y = GET_Y_LPARAM(lParam);
-        MapWindowPoints(hWnd, hwndRoot, &ptRoot, 1);
-
-        LPARAM lParamNew = (LPARAM)POINTTOPOINTS(ptRoot);
-
-        if (ForwardGadgetMessage(phh->GetDisplayNode(), uMsg, wParam, lParamNew, &result))
-            return result;
-
-        break;
-    }
 
     case WM_SETFOCUS:
         phh->SetKeyFocus();
