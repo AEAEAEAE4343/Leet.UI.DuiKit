@@ -1,4 +1,4 @@
-﻿namespace Leet.UI.DuiKit
+﻿namespace Leet.UI.DuiKit.Compiler
 {
     public class Program
     {
