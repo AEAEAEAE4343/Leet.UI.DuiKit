@@ -75,9 +75,10 @@ CAPTION "About Leet's DUI Notepad"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,219,155,50,14
-    LTEXT           "Leet's DUI Notepad\r\nVersion 1.0\r\n\r\n\r\nThis program is free software: you can redistribute it and/or modify it under the terms of the Simple Classic Theme License as published by Anis Errais (Leet), either version 1.0 of the License, or any later version.\r\n",IDC_STATIC,7,71,244,68
+    LTEXT           "Leet's DUI Notepad\r\nVersion 1.0\r\n\r\nConcept UI by Vruh3\r\nCredits to WiktorWiktor12 and Olivia for helping me with DUI issues.",IDC_STATIC,7,71,244,44
     CONTROL         "",IDC_STATIC2,"Static",SS_BITMAP,0,0,276,46
     LTEXT           "",IDC_STATIC,0,47,276,2,SS_SUNKEN
+    LTEXT           "This program is free software: you can redistribute it and/or modify it under the terms of the Simple Classic Theme License as published by Anis Errais (Leet), either version 1.0 of the License, or any later version.",IDC_STATIC,7,118,236,31
 END
 
 

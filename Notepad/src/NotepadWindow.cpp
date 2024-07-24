@@ -15,7 +15,7 @@ bool NotepadWindow::Create(NotepadWindow** pNotepadWindow, HINSTANCE moduleInsta
     HRESULT hRes = 0;
 
     // Create native window host
-    hRes = NativeHWNDHost::Create((UCString)L"Leet's DUI Notepad", (HWND)NULL, (HICON)NULL, CW_USEDEFAULT, CW_USEDEFAULT, 800, 600, 0, (int)WS_OVERLAPPEDWINDOW, 0U, &pNpWindow->_pNativeWindowHost);
+    hRes = NativeHWNDHost::Create((UCString)L"Leet's DUI Notepad", (HWND)NULL, (HICON)NULL, CW_USEDEFAULT, CW_USEDEFAULT, 1280, 720, 0, (int)WS_OVERLAPPEDWINDOW, 0U, &pNpWindow->_pNativeWindowHost);
     DUIAssert(hRes == S_OK, "Failed to create native window host.");
 
     // Create a main window element
