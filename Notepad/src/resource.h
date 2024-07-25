@@ -7,8 +7,8 @@
 #define IDD_DIALOG1                     201
 #define IDB_PNG1                        204
 #define IDB_BITMAP1                     206
+#define IDR_UIFILE1                     207
 #define IDR_DUIPADUI                    1000
-#define IDR_SAMPLEUI                    1001
 #define IDC_STATIC2                     1002
 #define ID_FILE_OPEN                    40001
 #define ID_FILE_SAVE                    40002
@@ -19,7 +19,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        207
+#define _APS_NEXT_RESOURCE_VALUE        208
 #define _APS_NEXT_COMMAND_VALUE         40004
 #define _APS_NEXT_CONTROL_VALUE         1003
 #define _APS_NEXT_SYMED_VALUE           100

@@ -17,7 +17,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 IDR_DUIPADUI            UIFILE                  "duinotepad.ui"
 
-IDR_SAMPLEUI            UIFILE                  "sample.ui"
+IDR_UIFILE1             UIFILE                  "sample.xml"
 
 
 #ifdef APSTUDIO_INVOKED

@@ -65,6 +65,17 @@ bool NotepadWindow::Create(NotepadWindow** pNotepadWindow, HINSTANCE moduleInsta
     pNpWindow->_pMarkupBox = pNpWindow->_pWindowElement->FindDescendent(StrToID(reinterpret_cast<UCString>(L"markupbox")));
     DUIAssert(pNpWindow->_pStatus && pNpWindow->_pContainer && pNpWindow->_pEdit && pNpWindow->_pMarkupBox, "Error in embedded DUIXML file.");
 
+    // Load sample UIFILE
+    HRSRC hrResource = FindResourceW(GetModuleHandleW(NULL), MAKEINTRESOURCE(IDR_UIFILE1), L"UIFILE");
+    HGLOBAL hgResource = LoadResource(GetModuleHandleW(NULL), hrResource);
+    void* pResourceData = LockResource(hgResource);
+    DWORD dResourceSize = SizeofResource(GetModuleHandle(NULL), hrResource);
+    char* pResBuffer = (char*)malloc(dResourceSize + 2);
+    memcpy_s(pResBuffer, dResourceSize, pResourceData, dResourceSize);
+    pResBuffer[dResourceSize] = 0;
+    pResBuffer[dResourceSize + 1] = 0;
+    pNpWindow->_pEdit->SetContentString((UCString)pResBuffer);
+
     pNpWindow->_pErrorBox->SetVisible(false);
     pNpWindow->_pErrorBox->SetLayoutPos(-3); // none
 
@@ -77,6 +88,8 @@ bool NotepadWindow::Create(NotepadWindow** pNotepadWindow, HINSTANCE moduleInsta
     pNpWindow->_pNativeWindowHost->Host(pNpWindow->_pWindowElement);
     pNpWindow->_pNativeWindowHost->ShowWindow(SW_SHOW);
     *pNotepadWindow = pNpWindow;
+
+    pNpWindow->Refresh(false);
 
     return true;
 }

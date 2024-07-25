@@ -40,6 +40,9 @@
     </None>
     <None Include="src\duinotepad.ui" />
     <None Include="src\sample.ui" />
+    <None Include="src\sample.xml">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectUI\accessibility.h">
@@ -391,5 +394,8 @@
     <Image Include="src\duinotepadbanner.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="src\sample.xml" />
   </ItemGroup>
 </Project>
