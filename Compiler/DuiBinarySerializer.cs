@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Leet.UI.DuiKit
+namespace Leet.UI.DuiKit.Compiler
 {
     public class DuiBinarySerializer 
     {
@@ -212,7 +212,7 @@ namespace Leet.UI.DuiKit
         /// Deserializes binary data from a Stream into a DuiData object.
         /// </summary>
         /// <param name="input">The stream from which to read in the DUI binary data.</param>
-        /// <returns>An DuiData object representing the data read from the stream.</returns>
+        /// <returns>An DuiBinaryData object representing the data read from the stream.</returns>
         public DuiBinaryData Deserialize(Stream input) 
         {
             uint entryChunkOffset;

@@ -3,7 +3,7 @@ using System.IO;
 using System.Xml;
 using System.Linq;
 
-namespace Leet.UI.DuiKit
+namespace Leet.UI.DuiKit.Compiler
 {
     public class DuiXmlSerializer
     {
@@ -45,6 +45,11 @@ namespace Leet.UI.DuiKit
             }
         }
 
+        /// <summary>
+        /// Deserializes XML data from a Stream into a DuiBinaryData object.
+        /// </summary>
+        /// <param name="input">The stream from which to read in the DUI XML data.</param>
+        /// <returns>A DuiBinaryData object representing the data read from the stream.</returns>
         public DuiBinaryData Deserialize(Stream input) 
         {
             DuiBinaryData data = new DuiBinaryData();

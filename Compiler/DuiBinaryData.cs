@@ -1,16 +1,20 @@
 using System.Collections.Generic;
 
-namespace Leet.UI.DuiKit
+namespace Leet.UI.DuiKit.Compiler
 {
+    /// <summary>
+    /// Data structure for storing DUI data from binary or XML files.
+    /// This structure is only meant as an intermediary storage structure and therefore exposes no public members.
+    /// </summary>
     public class DuiBinaryData 
     {
-        public class DuiBinaryResource
+        internal class DuiBinaryResource
         {
             public uint IdIndex;
             public uint AtEntry;
         }
 
-        public class DuiBinaryEntry
+        internal class DuiBinaryEntry
         {
             public enum EntryType : ushort
             {
@@ -30,9 +34,8 @@ namespace Leet.UI.DuiKit
             public List<EntryProperty> Properties = new List<EntryProperty>();
         }
 
-        public List<DuiBinaryEntry> Entries = new List<DuiBinaryEntry>();
-        public List<string> Strings = new List<string>();
-        public List<DuiBinaryResource> Resources = new List<DuiBinaryResource>();
-
+        internal List<DuiBinaryEntry> Entries = new List<DuiBinaryEntry>();
+        internal List<string> Strings = new List<string>();
+        internal List<DuiBinaryResource> Resources = new List<DuiBinaryResource>();
     }
 }

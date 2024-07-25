@@ -95,29 +95,6 @@ const UINT win32MouseMap[7][3] =
     {  WM_MOUSEWHEEL,       WM_MOUSEWHEEL,      WM_MOUSEWHEEL   },  // GMOUSE_WHEEL
 };
 
-class LineNumEventListener : public IElementListener 
-{
-public:
-    virtual void OnListenerAttach(class Element* elem) override {}
-    virtual void OnListenerDetach(class Element* elem) override {}
-    virtual bool OnPropertyChanging(class Element* elem, const struct PropertyInfo* prop, int unk, class Value* before, class Value* after) override 
-    {
-        return true;
-    };
-    virtual void OnListenedPropertyChanged(class Element* elem, const struct PropertyInfo* prop, int type, class Value* before, class Value* after) override
-    {
-        //((LineNumEditElement*)elem)->OnPropertyChanged(prop, type, before, after);
-    }
-    virtual void OnListenedInput(class Element* elem, struct InputEvent* event) override
-    {
-
-    }
-    virtual void OnListenedEvent(class Element* elem, struct Event* event) override 
-    {
-
-    };
-};
-
 HRESULT LineNumEditElement::Register()
 {
     return DirectUI::ClassInfo<LineNumEditElement, DirectUI::Element>::Register(GetModuleHandleW(NULL));
@@ -234,8 +211,6 @@ void LineNumEditElement::OnHosted(DirectUI::Element* pNewHost)
         SyncFont();
         SyncVisible();
         SyncText();
-
-        AddListener(new LineNumEventListener());
     }
     else
     {
@@ -274,8 +249,6 @@ void LineNumEditElement::OnPropertyChanged(const DirectUI::PropertyInfo* pPi, in
                 // Control doesn't already have keyboard focus, start the cycle here
                 SetFocus(_hWndCtrl);
             }
-
-            // Base will set focus to the display node if needed
         }
     }
 }
@@ -284,7 +257,7 @@ HRESULT LineNumEditElement::CreateInstance(DirectUI::Element* rootElement, unsig
 {
     int hr = E_OUTOFMEMORY;
 
-    // Using HeapAlloc instead of new() is required as DirectUI::Element::_DisplayNodeCallback calls HeapFree() with the element
+    // Using HeapAlloc instead of new() is required as DirectUI::Element::DisplayNodeCallback calls HeapFree() with the element
     LineNumEditElement* instance = (LineNumEditElement*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(LineNumEditElement));
 
     if (instance != NULL)
@@ -310,10 +283,9 @@ HRESULT LineNumEditElement::CreateInstance(DirectUI::Element* rootElement, unsig
 
 HWND LineNumEditElement::CreateHWND(HWND hwndParent)
 {
+    // TODO: Custom scrollbars
     int dwStyle = WS_CHILD | WS_VISIBLE | WS_HSCROLL | ES_MULTILINE | WS_VSCROLL;
-
     HWND hwndEdit = CreateWindowExW(0, L"LineNumEdit", NULL, dwStyle, 0, 0, GetWidth(), GetHeight(), hwndParent, (HMENU)1, NULL, NULL);
-    
     return hwndEdit;
 }
 
@@ -469,12 +441,6 @@ LRESULT LineNumEditElement::sinkSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam
 
     switch (uMsg)
     {
-    /*case WM_COMMAND:
-    case WM_NOTIFY:
-        LRESULT lRes;
-        if (phh->OnNotify(uMsg, wParam, lParam, &lRes))
-            return lRes;
-        break;*/
     case WM_GETOBJECT:
         return 0;
     case WM_DESTROY:
