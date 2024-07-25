@@ -34,5 +34,10 @@ DuiBinaryData duiData = binSerializer.Deserialize(inputStream);
 xmlSerializer.Serialize(duiData, outputStream);
 ```
 
+To add the library to your project, simply add the *Leet.UI.DuiKit.Compiler* NuGet package:
+```
+dotnet add package Leet.UI.DuiKit.Compiler
+```
+
 # License
 The entire DirectUI Toolkit project is licensed under the Simple Classic Theme license, version 1.0. For more information, see `LICENSE.MD`.
