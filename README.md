@@ -1,11 +1,11 @@
-![Leet's DirectUI Toolkit](https://github.com/AEAEAEAE4343/Leet.UI.DuiKit/blob/master/screenshots/bannernofonts.svg?raw=true)
+![Leet's DirectUI Toolkit](https://raw.githubusercontent.com/AEAEAEAE4343/Leet.UI.DuiKit/master/screenshots/bannernofonts.svg)
 ---
 Set of tools for working with the undocumented DirectUI user interface library found in Windows.
 
 ## Leet's DirectUI Notepad (Leet.UI.DuiKit.Notepad)
 GUI tool for developing and previewing Direct UI XML files, written in C++ using DirectUI.
 
-![Leet's DirectUI Notepad](https://github.com/AEAEAEAE4343/Leet.UI.DuiKit/blob/master/screenshots/notepad.png?raw=true)
+![Leet's DirectUI Notepad](https://raw.githubusercontent.com/AEAEAEAE4343/Leet.UI.DuiKit/master/screenshots/notepad.png)
 
 Traditionally DirectUI modifications or custom programs were made by trial and error. There was no easy way to get direct feedback from code. Painstakingly editing executable resources over and over again was common. With DirectUI Notepad this is no longer the case.
 
@@ -15,7 +15,7 @@ DUI XML code can be entered into the left pane and it will be compiled as you ty
 Simple tool for converting DUI Binary data into DUI XML and reverse, written using .NET WinForms. 
 The interface is very easy to use and quite self explanatory:
 
-![Leet's DirectUI Compiler](https://github.com/AEAEAEAE4343/Leet.UI.DuiKit/blob/master/screenshots/winformscompiler.png?raw=true)
+![Leet's DirectUI Compiler](https://raw.githubusercontent.com/AEAEAEAE4343/Leet.UI.DuiKit/master/screenshots/winformscompiler.png)
 
 ## Leet.UI.DuiKit.Compiler
 .NET library for compiling and decompiling DUI binary (DUIB) and DUI XML files. This serves as the backend for *Leet's DUI Compiler*.

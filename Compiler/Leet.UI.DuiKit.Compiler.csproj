@@ -10,6 +10,13 @@
     <Authors>leetftw</Authors>
     <RepositoryUrl>https://github.com/AEAEAEAE4343/Leet.UI.DuiKit</RepositoryUrl>
     <PackageProjectUrl>https://github.com/AEAEAEAE4343/Leet.UI.DuiKit</PackageProjectUrl>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryType>git</RepositoryType>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +27,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AnyDiff" Version="1.0.99" />
+    <None Include="..\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
