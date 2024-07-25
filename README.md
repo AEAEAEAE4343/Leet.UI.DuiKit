@@ -1,4 +1,4 @@
-![Leet's DirectUI Toolkit](https://raw.githubusercontent.com/AEAEAEAE4343/Leet.UI.DuiKit/master/screenshots/bannernofonts.svg)
+![Leet's DirectUI Toolkit](https://github.com/AEAEAEAE4343/Leet.UI.DuiKit/blob/master/screenshots/bannernofonts.svg?raw=true)
 ---
 Set of tools for working with the undocumented DirectUI user interface library found in Windows.
 
