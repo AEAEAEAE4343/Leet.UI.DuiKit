@@ -39,5 +39,8 @@ To add the library to your project, simply add the *Leet.UI.DuiKit.Compiler* NuG
 dotnet add package Leet.UI.DuiKit.Compiler
 ```
 
+# Builds
+You can find precompiled binaries on the [Releases](https://github.com/AEAEAEAE4343/Leet.UI.DuiKit/releases) page.
+
 # License
 The entire DirectUI Toolkit project is licensed under the Simple Classic Theme license, version 1.0. For more information, see `LICENSE.MD`.
