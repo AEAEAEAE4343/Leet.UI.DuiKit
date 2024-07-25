@@ -141,7 +141,6 @@
     <None Include="DirectUI\DirectUI.def" />
     <None Include="src\duinotepad.ui" />
     <None Include="src\sample.ui" />
-    <None Include="src\sample.xml" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectUI\accessibility.h" />
