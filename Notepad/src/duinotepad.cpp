@@ -12,7 +12,7 @@
  * You should have received a copy of the Simple Classic Theme License along
  * with this program. If not, see <https://simpleclassictheme.nl/license.html>.
  *
- * duinotepad.h: Main Entry point
+ * duinotepad.cpp: Main Entry point
  *
  */
 
