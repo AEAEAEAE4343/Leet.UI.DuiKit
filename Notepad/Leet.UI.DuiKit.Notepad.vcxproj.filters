@@ -27,7 +27,7 @@
     <ClCompile Include="src\NotepadListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LineNumEdit\LineNumEdit.cpp">
+    <ClCompile Include="..\LineNumEdit\LineNumEdit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\LineNumEditElement.cpp">

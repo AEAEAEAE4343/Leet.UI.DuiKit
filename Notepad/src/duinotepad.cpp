@@ -21,7 +21,7 @@
 #include "NotepadListener.h"
 #include "LineNumEditElement.h"
 #define LINENUMEDIT_IMPL
-#include "../LineNumEdit/LineNumEdit.hpp"
+#include "../../LineNumEdit/LineNumEdit.hpp"
 
 using namespace DirectUI;
 using namespace Leet::UI::DuiKit::Notepad;

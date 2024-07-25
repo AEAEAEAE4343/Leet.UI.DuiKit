@@ -132,7 +132,7 @@
   <ItemGroup>
     <ClCompile Include="src\ClassInfo.h" />
     <ClCompile Include="src\LineNumEditElement.cpp" />
-    <ClCompile Include="LineNumEdit\LineNumEdit.cpp" />
+    <ClCompile Include="..\LineNumEdit\LineNumEdit.cpp" />
     <ClCompile Include="src\NotepadListener.cpp" />
     <ClCompile Include="src\NotepadWindow.cpp" />
     <ClCompile Include="src\duinotepad.cpp" />
