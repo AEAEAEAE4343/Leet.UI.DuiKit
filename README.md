@@ -39,8 +39,11 @@ To add the library to your project, simply add the *Leet.UI.DuiKit.Compiler* NuG
 dotnet add package Leet.UI.DuiKit.Compiler
 ```
 
-# Builds
-You can find precompiled binaries on the [Releases](https://github.com/AEAEAEAE4343/Leet.UI.DuiKit/releases) page.
+# Building the project
+You can find precompiled binaries on the [Releases](https://github.com/AEAEAEAE4343/Leet.UI.DuiKit/releases) page. A Visual Studio 2022 solution along with project files for each project are included in the repository. 
+
+# Credits
+Leet's DirectUI Notepad uses reverse engineered dui70.dll headers. These can be found [here](https://github.com/MishaProductions/dui70). For more info see [this README page](Notepad/DirectUI/README.md).
 
 # License
 The entire DirectUI Toolkit project is licensed under the Simple Classic Theme license, version 1.0. For more information, see `LICENSE.MD`.
