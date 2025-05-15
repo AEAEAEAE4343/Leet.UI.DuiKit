@@ -452,6 +452,21 @@ void NotepadWindow::OnEvent(Element* elem, Event* pEvent)
 	}
 }
 
+#include <strsafe.h>
+
+WCHAR NotepadWindow::_szParseError[201];
+int NotepadWindow::_dParseError;
+void CALLBACK NotepadWindow::ParserErrorHandler(LPCWSTR pszError, LPCWSTR pszToken, int dLine, void* showBox)
+{
+	StringCchCopyW(_szParseError, ARRAYSIZE(_szParseError), pszError);
+	//if (dLine != -1)
+	//	swprintf(_szParseError, L"%s '%s' at line %d", pszError, pszToken, dLine);
+	//else
+	//	swprintf(_szParseError, L"%s '%s'", pszError, pszToken);
+
+	if (*reinterpret_cast<bool*>(showBox))
+		MessageBoxW(NULL, _szParseError, L"DUIXML Parser Error", MB_OK);
+}
 
 void NotepadWindow::Refresh(bool showError)
 {

@@ -38,6 +38,8 @@ namespace Notepad
 		void OnInput(DirectUI::Element* elem, struct DirectUI::InputEvent* pie);
 		void OnEvent(DirectUI::Element* elem, struct DirectUI::Event* pEvent);
 
+		static void CALLBACK ParserErrorHandler(LPCWSTR pszError, LPCWSTR pszToken, int dLine, void* showBox);
+
 		void Refresh(bool showError);
 	private:
 		NotepadWindow();
@@ -53,5 +55,7 @@ namespace Notepad
 		DirectUI::Element* _pContainer;
 		DirectUI::Element* _pEdit;
 		DirectUI::Element* _pMarkupBox;
+		static WCHAR _szParseError[];
+		static int _dParseError;
 	};
 }}}}

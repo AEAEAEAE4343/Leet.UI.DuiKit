@@ -45,6 +45,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     // Register DUI control set
     DirectUI::RegisterAllControls();
 
+    // Register the DUI PVLAnimation Factory to allow Behavior="Class::Type([opt]args)" in the markup
+    DirectUI::RegisterPVLBehaviorFactory();
+
     // Register LineNumEdit win32 control
     LineNumEdit::SuperclassWindow();
     LineNumEditElement::Register();

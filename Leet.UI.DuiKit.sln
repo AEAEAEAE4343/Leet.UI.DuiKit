@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Leet.UI.DuiKit.Compiler", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leet.UI.DuiKit.Compiler.WinForms", "Compiler.WinForms\Leet.UI.DuiKit.Compiler.WinForms.csproj", "{5ABCD16D-602D-4E3A-968D-A467BAAC2A2F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectUI", "Notepad\src\include\DirectUI\DirectUI\DirectUI.vcxproj", "{0B7DE49A-33C6-41B1-A9CE-D353031F8454}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Architecture = Debug|Mixed Architecture
@@ -27,6 +29,10 @@ Global
 		{5ABCD16D-602D-4E3A-968D-A467BAAC2A2F}.Debug|Mixed Architecture.Build.0 = Debug|Any CPU
 		{5ABCD16D-602D-4E3A-968D-A467BAAC2A2F}.Release|Mixed Architecture.ActiveCfg = Release|Any CPU
 		{5ABCD16D-602D-4E3A-968D-A467BAAC2A2F}.Release|Mixed Architecture.Build.0 = Release|Any CPU
+		{0B7DE49A-33C6-41B1-A9CE-D353031F8454}.Debug|Mixed Architecture.ActiveCfg = Debug|x64
+		{0B7DE49A-33C6-41B1-A9CE-D353031F8454}.Debug|Mixed Architecture.Build.0 = Debug|x64
+		{0B7DE49A-33C6-41B1-A9CE-D353031F8454}.Release|Mixed Architecture.ActiveCfg = Release|x64
+		{0B7DE49A-33C6-41B1-A9CE-D353031F8454}.Release|Mixed Architecture.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

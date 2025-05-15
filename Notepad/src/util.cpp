@@ -18,16 +18,3 @@
 
 #include "util.h"
 
-WCHAR _szParseError[201];
-int _dParseError;
-
-void CALLBACK ParserErrorHandler(LPCWSTR pszError, LPCWSTR pszToken, int dLine, void* showBox)
-{
-    if (dLine != -1)
-        swprintf(_szParseError, L"%s '%s' at line %d", pszError, pszToken, dLine);
-    else
-        swprintf(_szParseError, L"%s '%s'", pszError, pszToken);
-
-    if (*reinterpret_cast<bool*>(showBox))
-        MessageBoxW(NULL, _szParseError, L"DUIXML Parser Error", MB_OK);
-}
